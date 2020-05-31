@@ -1,0 +1,28 @@
+.kt-dropzone__assets {
+    display: flex;
+    justify-content: center;
+
+    img {
+        width: 35px;
+    }
+
+    .kt-drop-asset {
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+.image-upload>input {
+    display: none;
+}
+
+.image-upload>label:hover {
+    cursor: pointer !important;
+}
+
+.kt-progress-wrapper {
+    border: 1px solid red;
+    margin-top: -25px;
+    margin-bottom: 25px;
+}
