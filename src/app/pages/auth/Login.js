@@ -1,30 +1,25 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Formik } from "formik";
 import { connect } from "react-redux";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { TextField } from "@material-ui/core";
 import clsx from "clsx";
-import * as auth from "../../store/ducks/auth.duck";
-import { login } from "../../crud/auth.crud";
-import { signin } from "../../services/auth";
+import { auth, authFail } from "../../store/actions/auth.action";
 
 function Login(props) {
-  const { intl } = props;
-  const [loading, setLoading] = useState(false);
-  const [loadingButtonStyle, setLoadingButtonStyle] = useState({
-    paddingRight: "2.5rem",
-  });
-  const [serverError, setServerError] = React.useState();
+  const [values, setValues] = React.useState({ email: "", password: "" });
 
-  const enableLoading = () => {
-    setLoading(true);
-    setLoadingButtonStyle({ paddingRight: "3.5rem" });
+  React.useEffect(() => {
+    props.removeError(null);
+  }, []);
+
+  const handleOnChange = (event) => {
+    const { name, value } = event.target;
+    setValues({ ...values, [name]: value });
   };
 
-  const disableLoading = () => {
-    setLoading(false);
-    setLoadingButtonStyle({ paddingRight: "2.5rem" });
+  const handleOnSubmit = async () => {
+    await props.auth(values, "SIGNIN");
   };
 
   return (
@@ -37,145 +32,101 @@ function Login(props) {
             </h3>
           </div>
 
-          <Formik
-            initialValues={{
-              email: "",
-              password: "",
-            }}
-            validate={(values) => {
-              const errors = {};
-
-              if (!values.email) {
-                // https://github.com/formatjs/react-intl/blob/master/docs/API.md#injection-api
-                errors.email = intl.formatMessage({
-                  id: "AUTH.VALIDATION.REQUIRED_FIELD",
-                });
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = intl.formatMessage({
-                  id: "AUTH.VALIDATION.INVALID_FIELD",
-                });
-              }
-
-              if (!values.password) {
-                errors.password = intl.formatMessage({
-                  id: "AUTH.VALIDATION.REQUIRED_FIELD",
-                });
-              }
-
-              return errors;
-            }}
-            onSubmit={async (values, { setStatus, setSubmitting }) => {
-              enableLoading();
-              await signin(values)
-                .then(({ data: { error, token } }) => {
-                  if (error) {
-                    setServerError(error);
-                  } else {
-                    setServerError(null);
-                    localStorage.setItem("epxlr-auth", token);
-                    props.history.push("/dashboard");
-                  }
-                })
-                .catch((err) => {});
-              disableLoading();
-            }}
-          >
-            {({
-              values,
-              status,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isSubmitting,
-            }) => (
-              <React.Fragment>
-                {serverError && (
-                  <div role="alert" className="alert alert-danger">
-                    <div className="alert-text">{serverError}</div>
-                  </div>
-                )}
-                <form
-                  noValidate={true}
-                  autoComplete="off"
-                  className="kt-form"
-                  onSubmit={handleSubmit}
-                >
-                  <div className="form-group">
-                    <TextField
-                      type="email"
-                      label="Email"
-                      margin="normal"
-                      className="kt-width-full"
-                      name="email"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.email}
-                      helperText={touched.email && errors.email}
-                      error={Boolean(touched.email && errors.email)}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <TextField
-                      type="password"
-                      margin="normal"
-                      label="Password"
-                      className="kt-width-full"
-                      name="password"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.password}
-                      helperText={touched.password && errors.password}
-                      error={Boolean(touched.password && errors.password)}
-                    />
-                  </div>
-                  <div className="kt-link-wrapper">
-                    <Link
-                      to="/auth/forgot-password"
-                      className="kt-link kt-login__link-forgot"
-                    >
-                      <FormattedMessage id="AUTH.GENERAL.FORGOT_BUTTON" />
-                    </Link>
-                  </div>
-                  <div className="kt-login__actions">
-                    <button
-                      id="kt_login_signin_submit"
-                      type="submit"
-                      disabled={isSubmitting}
-                      className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
-                        {
-                          "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light": loading,
-                        }
-                      )}`}
-                      style={loadingButtonStyle}
-                    >
-                      Sign In
-                    </button>
-                  </div>
-                  <div className="kt-login__head">
-                    <span className="kt-login__signup-label">
-                      Don't have an account yet?
-                    </span>
-                    &nbsp;&nbsp;
-                    <Link
-                      to="/auth/registration"
-                      className="kt-link kt-login__signup-link"
-                    >
-                      Sign Up!
-                    </Link>
-                  </div>
-                </form>
-              </React.Fragment>
+          <React.Fragment>
+            {props.error && (
+              <div role="alert" className="alert alert-danger">
+                <div className="alert-text">{props.error}</div>
+              </div>
             )}
-          </Formik>
+
+            <div className="form-group">
+              <TextField
+                type="email"
+                label="Email"
+                margin="normal"
+                className="kt-width-full"
+                name="email"
+                // onBlur={handleBlur}
+                onChange={handleOnChange}
+                value={values.email}
+                // helperText={touched.email && errors.email}
+                // error={Boolean(touched.email && errors.email)}
+              />
+            </div>
+
+            <div className="form-group">
+              <TextField
+                type="password"
+                margin="normal"
+                label="Password"
+                className="kt-width-full"
+                name="password"
+                // onBlur={handleBlur}
+                onChange={handleOnChange}
+                value={values.password}
+                // helperText={touched.password && errors.password}
+                // error={Boolean(touched.password && errors.password)}
+              />
+            </div>
+            <div className="kt-link-wrapper">
+              <Link
+                to="/auth/forgot-password"
+                className="kt-link kt-login__link-forgot"
+              >
+                <FormattedMessage id="AUTH.GENERAL.FORGOT_BUTTON" />
+              </Link>
+            </div>
+            <div className="kt-login__actions">
+              <button
+                id="kt_login_signin_submit"
+                type="submit"
+                onClick={handleOnSubmit}
+                className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
+                  {
+                    "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light":
+                      props.loading,
+                  }
+                )}`}
+                style={
+                  props.loading
+                    ? { paddingRight: "3.5rem" }
+                    : { paddingRight: "2.5rem" }
+                }
+              >
+                Sign In
+              </button>
+            </div>
+            <div className="kt-login__head">
+              <span className="kt-login__signup-label">
+                Don't have an account yet?
+              </span>
+              &nbsp;&nbsp;
+              <Link
+                to="/auth/registration"
+                className="kt-link kt-login__signup-link"
+              >
+                Sign Up!
+              </Link>
+            </div>
+          </React.Fragment>
         </div>
       </div>
     </>
   );
 }
 
-export default injectIntl(connect(null, auth.actions)(Login));
+const mapDispatchToProps = (dispatch) => {
+  return {
+    auth: (data, action) => dispatch(auth(data, action)),
+    removeError: (error) => dispatch(authFail(error)),
+  };
+};
+const mapStateToProps = (state) => {
+  return {
+    loading: state.auth.loading,
+    error: state.auth.error,
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
+
+// export default injectIntl(connect(null, auth.actions)(Login));

@@ -28,7 +28,7 @@ function Dropzone({ handleImgBuffer, loading }) {
       return;
     } else if (source === "device") {
       // handleImgBuffer(URL.createObjectURL(url.target.files[0]));
-      handleImgBuffer(url.target.files[0]);
+      handleImgBuffer(url.target.files);
       return;
     }
   };
@@ -51,6 +51,7 @@ function Dropzone({ handleImgBuffer, loading }) {
               <input
                 id="file-input"
                 type="file"
+                multiple
                 onChange={(event) => generateImageUrl(event, "device")}
               />
             </div>

@@ -1,14 +1,18 @@
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid */
 import React from "react";
-import { Link } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import { connect } from "react-redux";
 import { toAbsoluteUrl } from "../../../_metronic";
+import { authLogout } from "../../store/actions/auth.action";
 import HeaderDropdownToggle from "../content/CustomDropdowns/HeaderDropdownToggle";
 
 class UserProfile extends React.Component {
   render() {
-    const { user, showHi, showAvatar, showBadge } = this.props;
+    const { authLogout, user } = this.props;
+
+    const handleLogout = async () => {
+      await authLogout();
+    };
 
     return (
       <Dropdown
@@ -22,10 +26,8 @@ class UserProfile extends React.Component {
         >
           <div className="kt-header__topbar-user">
             <span className="kt-header__topbar-username kt-hidden-mobile">
-              {"Bilal"}
+              {user}
             </span>
-
-            {/*{showAvatar && <img alt="Pic" src={user.pic} />} */}
           </div>
         </Dropdown.Toggle>
         <Dropdown.Menu className="dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
@@ -43,52 +45,13 @@ class UserProfile extends React.Component {
                 </div>
               </div>
             </a>
-            {/*<a className="kt-notification__item">
-              <div className="kt-notification__item-icon">
-                <i className="flaticon2-mail kt-font-warning" />
-              </div>
-              <div className="kt-notification__item-details">
-                <div className="kt-notification__item-title kt-font-bold">
-                  My Messages
-                </div>
-                <div className="kt-notification__item-time">
-                  Inbox and tasks
-                </div>
-              </div>
-            </a>
-            <a className="kt-notification__item">
-              <div className="kt-notification__item-icon">
-                <i className="flaticon2-rocket-1 kt-font-danger" />
-              </div>
-              <div className="kt-notification__item-details">
-                <div className="kt-notification__item-title kt-font-bold">
-                  My Activities
-                </div>
-                <div className="kt-notification__item-time">
-                  Logs and notifications
-                </div>
-              </div>
-            </a>
-            <a className="kt-notification__item">
-              <div className="kt-notification__item-icon">
-                <i className="flaticon2-hourglass kt-font-brand" />
-              </div>
-              <div className="kt-notification__item-details">
-                <div className="kt-notification__item-title kt-font-bold">
-                  My Tasks
-                </div>
-                <div className="kt-notification__item-time">
-                  latest tasks and projects
-                </div>
-              </div>
-          </a>*/}
             <div className="kt-notification__custom">
-              <Link
-                to="/logout"
+              <button
+                onClick={handleLogout}
                 className="btn btn-label-brand btn-sm btn-bold"
               >
                 Sign Out
-              </Link>
+              </button>
             </div>
           </div>
         </Dropdown.Menu>
@@ -97,8 +60,16 @@ class UserProfile extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth: { user } }) => ({
-  user,
-});
+const mapDispatchToProps = (dispatch) => {
+  return {
+    authLogout: () => dispatch(authLogout()),
+  };
+};
 
-export default connect(mapStateToProps)(UserProfile);
+const mapStateToProps = (state) => {
+  return {
+    user: state.auth.user,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

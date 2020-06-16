@@ -7,7 +7,6 @@ import Registration from "./Registration";
 import ForgotPassword from "./ForgotPassword";
 
 export default function AuthPage() {
-  console.log("authPage");
   return (
     <>
       <div className="kt-grid kt-grid--ver kt-grid--root">

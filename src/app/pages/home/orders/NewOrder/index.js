@@ -7,35 +7,60 @@ import {
   ToastsStore,
   ToastsContainerPosition,
 } from "react-toasts";
+import {
+  incrementOrderFormStep,
+  decrementOrderFormStep,
+} from "../../../../store/actions/orders.action";
+import { connect } from "react-redux";
 
 const steps = ["Upload Images", "Select Template", "Template Setting"];
 
-function getStepContent(step, setStepNext) {
+function getStepContent(step, handleBack, handleNext) {
   switch (step) {
     case 0:
-      return <UploadImages setStepNext={setStepNext} />;
+      return (
+        <UploadImages
+          activeStep={step}
+          handleBack={handleBack}
+          handleNext={handleNext}
+        />
+      );
     case 1:
-      return <SelectTemplate />;
+      return (
+        <SelectTemplate
+          activeStep={step}
+          handleBack={handleBack}
+          handleNext={handleNext}
+        />
+      );
     case 2:
-      return <TemplateSetting />;
+      return (
+        <TemplateSetting
+          activeStep={step}
+          handleBack={handleBack}
+          handleNext={handleNext}
+        />
+      );
     default:
       return null;
   }
 }
 
-function Index() {
+function Index(props) {
   const [activeStep, setActiveStep] = React.useState(2);
   const [stepNext, setStepNext] = React.useState(false);
 
   const handleNext = () => {
-    if (stepNext == false) {
+    if (props.imagesBuffer.length <= 0) {
       ToastsStore.error("Please choose an image first");
       return;
     }
+    props.incrementOrderFormStep();
     activeStep < 2 && setActiveStep(activeStep + 1);
   };
 
   const handleBack = () => {
+    props.decrementOrderFormStep();
     activeStep >= 0 && setActiveStep(activeStep - 1);
   };
 
@@ -54,8 +79,8 @@ function Index() {
         </div>
       </div>
       <div>
-        {getStepContent(activeStep, setStepNext)}
-        <div className="row px-5">
+        {getStepContent(activeStep, handleBack, handleNext)}
+        {/*<div className="row px-5">
           <div className="col d-flex justify-content-end">
             {activeStep > 0 && (
               <button
@@ -73,10 +98,22 @@ function Index() {
               {activeStep === 2 && "Submit Order"}
             </button>
           </div>
-        </div>
+            </div>*/}
       </div>
     </React.Fragment>
   );
 }
 
-export default Index;
+const mapStateToProps = (state) => {
+  return {
+    imagesBuffer: state.orders.imagesBuffer,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    incrementOrderFormStep: () => dispatch(incrementOrderFormStep()),
+    decrementOrderFormStep: () => dispatch(decrementOrderFormStep()),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Index);

@@ -7,7 +7,7 @@ const templateSchema = Joi.object({
   fileType: Joi.string()
     .required()
     .label("File Type"),
-  fileSize: Joi.string()
+  shape: Joi.string()
     .required()
     .label("File Size"),
   backgroundColor: Joi.string()
