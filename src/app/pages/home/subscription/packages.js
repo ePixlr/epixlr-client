@@ -90,14 +90,14 @@ function SubscriptionPackages(props) {
     const [subscribedPlan, setSubscribedPlan] = useState(localStorage.getItem("subscribedPlan"))
     const prices = {
         annual: {
+            solo: 108,
+            pro: 600,
+            enterprise: "23,988"
+        },
+        monthly: {
             solo: 9,
             pro: 50,
             enterprise: 1999
-        },
-        monthly: {
-            solo: 1,
-            pro: 5,
-            enterprise: 169
         }
     }
 

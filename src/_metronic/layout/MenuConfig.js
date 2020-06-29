@@ -537,6 +537,12 @@ export default {
         page: "order/status"
       },
       {
+        title: "Buy Credit",
+        root: true,
+        icon: "flaticon-time",
+        page: "subscription"
+      },
+      {
         title: "Invoice",
         root: true,
         icon: "flaticon2-expand",
