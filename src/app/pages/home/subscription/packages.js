@@ -92,7 +92,7 @@ function SubscriptionPackages(props) {
         annual: {
             solo: 108,
             pro: 600,
-            enterprise: "23,988"
+            enterprise: 1999
         },
         monthly: {
             solo: 9,
