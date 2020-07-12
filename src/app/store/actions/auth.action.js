@@ -6,7 +6,7 @@ import {
   CLEAR_ORDER_BUFFER,
 } from "./types";
 import axios from "axios";
-let endPoint = process.env.REACT_APP_AUTH_API_URL;
+let endPoint = process.env.REACT_APP_SERVER_URL + "auth";;
 
 export const authStart = () => {
   return {

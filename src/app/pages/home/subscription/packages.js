@@ -1,10 +1,11 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom';
 import {
     makeStyles
   } from '@material-ui/core';
 import PayPalBtn from './paypalButton.js'
 import swal from 'sweetalert';
+import { getUserSubscription, addUserSubscription } from '../../../services/subscription'
 
 const useStyles = makeStyles((theme) => ({
     p0: { paddingRight: 0, paddingLeft: 0 },
@@ -85,9 +86,17 @@ const useStyles = makeStyles((theme) => ({
 
 function SubscriptionPackages(props) {
     const classes = useStyles();
-    const [packageTenure, setPackageTenure] = useState(localStorage.getItem("subscriptionTenure") != null ? localStorage.getItem("subscriptionTenure") : "annual");
-    const [paypalPlan, setPaypalPlan] = useState("")
-    const [subscribedPlan, setSubscribedPlan] = useState(localStorage.getItem("subscribedPlan"))
+    const [subscriptionFrequency, setSubscriptionFrequency] = useState("annual");
+    const [subscribedPlan, setSubscribedPlan] = useState("")
+    useEffect(() => {
+        getUserSubscription().then(({data, status}) => {
+            if(status === 200){
+                setSubscriptionFrequency(data.frequency)
+                setSubscribedPlan(data.planId)
+            }
+        })
+    },[]);
+
     const prices = {
         annual: {
             solo: 108,
@@ -114,23 +123,27 @@ function SubscriptionPackages(props) {
         }
     }
 
-    const handlePackageTenureChange = (e) => {
+    const handlesubscriptionFrequencyChange = (e) => {
         const { value } = e.target
-        setPackageTenure(value)
+        setSubscriptionFrequency(value)
     }
 
     const paymentHandler = (details, data) => {
-        swal.close();
-        setSubscribedPlan(localStorage.getItem("subscribedPlan"))
-        
-        localStorage.setItem("subscriptionTenure",packageTenure)
-        
-        const { billingToken, facilitatorAccessToken, orderID, subscriptionID} = details
+        var planId = localStorage.getItem("subscribedPlan")
+        details.frequency = subscriptionFrequency
+        details.planId = planId
+        addUserSubscription(details).then(({data, status }) => {
+            if(status === 200){
+                localStorage.setItem("subscriptionFrequency",subscriptionFrequency)
+                setSubscribedPlan(planId)
+                swal.close();
+            }
+        })
     }
 
     const handlePackageSelect = (e) => {
         const { value } = e.target
-        var planId = packageTenure === "annual" ? paypalPlanIds.annual[value] : paypalPlanIds.monthly[value]
+        var planId = subscriptionFrequency === "annual" ? paypalPlanIds.annual[value] : paypalPlanIds.monthly[value]
         localStorage.setItem("subscribedPlan",planId)
         let wrapper = document.createElement('div');
         ReactDOM.render(<PayPalBtn
@@ -159,11 +172,11 @@ function SubscriptionPackages(props) {
                             
 
                             <div className={"btn-group btn-group-toggle "} data-toggle="buttons">
-                                <label className={packageTenure === "annual" ? "btn text-uppercase active " + classes.radioButtons + " " + classes.radioButtonActive : "btn text-uppercase " + classes.radioButtons}>
-                                    <input type="radio" onClick={handlePackageTenureChange} name="packageTenure" value="annual" /> Annual Plan
+                                <label className={subscriptionFrequency === "annual" ? "btn text-uppercase active " + classes.radioButtons + " " + classes.radioButtonActive : "btn text-uppercase " + classes.radioButtons}>
+                                    <input type="radio" onClick={handlesubscriptionFrequencyChange} name="subscriptionFrequency" value="annual" /> Annual Plan
                                 </label>
-                                <label className={packageTenure === "monthly" ? "btn text-uppercase active " + classes.radioButtons + " " + classes.radioButtonActive : "btn text-uppercase " + classes.radioButtons}>
-                                    <input type="radio" onClick={handlePackageTenureChange} name="packageTenure" value="monthly"  /> Monthly Plan
+                                <label className={subscriptionFrequency === "monthly" ? "btn text-uppercase active " + classes.radioButtons + " " + classes.radioButtonActive : "btn text-uppercase " + classes.radioButtons}>
+                                    <input type="radio" onClick={handlesubscriptionFrequencyChange} name="subscriptionFrequency" value="monthly"  /> Monthly Plan
                                 </label>
                             </div>
                         </div>
@@ -174,7 +187,7 @@ function SubscriptionPackages(props) {
                                 <div className="card-body">
                                     <h3 className="card-title text-muted text-center">Solo</h3>
                                     {
-                                        subscribedPlan == paypalPlanIds[packageTenure].solo ?
+                                        subscribedPlan == paypalPlanIds[subscriptionFrequency].solo ?
                                             <h5 className={classes.subscribedPlanText}>Subscribed</h5>
                                         : ""
                                     }
@@ -191,7 +204,7 @@ function SubscriptionPackages(props) {
                                         <li>&nbsp;</li>
                                         <li>&nbsp;</li>
                                     </ul>
-                                    <h4 className={classes.price}>{packageTenure === "annual" ? prices.annual.solo : prices.monthly.solo}
+                                    <h4 className={classes.price}>{subscriptionFrequency === "annual" ? prices.annual.solo : prices.monthly.solo}
                                         <sup className={classes.dollarSign}>$</sup>
                                     </h4>
                                     <button onClick={handlePackageSelect} value="solo" className={"btn btn-primary text-uppercase " + classes.roundedBtn}>Purchase</button>
@@ -203,7 +216,7 @@ function SubscriptionPackages(props) {
                             <div className="card-body">
                                 <h3 className="card-title text-muted text-center">Pro</h3>
                                 {
-                                    subscribedPlan == paypalPlanIds[packageTenure].pro ?
+                                    subscribedPlan == paypalPlanIds[subscriptionFrequency].pro ?
                                         <h5 className={classes.subscribedPlanText}>Subscribed</h5>
                                     : ""
                                 }
@@ -220,7 +233,7 @@ function SubscriptionPackages(props) {
                                     <li>Free trail</li>
                                     <li>10 users</li>
                                 </ul>
-                                <h4 className={classes.price}>{packageTenure === "annual" ? prices.annual.pro : prices.monthly.pro}
+                                <h4 className={classes.price}>{subscriptionFrequency === "annual" ? prices.annual.pro : prices.monthly.pro}
                                     <sup className={classes.dollarSign}>$</sup>
                                 </h4>
                                 <button value="pro" onClick={handlePackageSelect} className={"btn btn-primary text-uppercase " + classes.roundedBtn}>Purchase</button>
@@ -232,7 +245,7 @@ function SubscriptionPackages(props) {
                             <div className="card-body">
                                 <h3 className="card-title text-muted text-center">Enterprise</h3>
                                 {
-                                    subscribedPlan == paypalPlanIds[packageTenure].enterprise ?
+                                    subscribedPlan == paypalPlanIds[subscriptionFrequency].enterprise ?
                                         <h5 className={classes.subscribedPlanText}>Subscribed</h5>
                                     : ""
                                 }
@@ -249,7 +262,7 @@ function SubscriptionPackages(props) {
                                     <li>&nbsp;</li>
                                     <li>&nbsp;</li>
                                 </ul>
-                                <h4 className={classes.price}>{packageTenure === "annual" ? prices.annual.enterprise : prices.monthly.enterprise}
+                                <h4 className={classes.price}>{subscriptionFrequency === "annual" ? prices.annual.enterprise : prices.monthly.enterprise}
                                     <sup className={classes.dollarSign}>$</sup>
                                 </h4>
                                 <button value='enterprise' onClick={handlePackageSelect} className={"btn btn-primary text-uppercase " + classes.roundedBtn}>Purchase</button>

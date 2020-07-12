@@ -82,7 +82,6 @@ function Layout({
       </div>
       <QuickPanel />
       <ScrollTop />
-      <StickyToolbar />
     </LayoutInitializer>
   ) : (
     // BLANK LAYOUT

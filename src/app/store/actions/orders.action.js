@@ -14,8 +14,8 @@ import {
 } from "./types";
 import swal from "sweetalert";
 import axios from "axios";
-const ordersUrl = process.env.REACT_APP_ORDERS_API_URL;
-const mediaUrl = process.env.REACT_APP_MEDIA_API_URL;
+const ordersUrl = process.env.REACT_APP_SERVER_URL + "order";
+const mediaUrl = process.env.REACT_APP_SERVER_URL + "media";
 
 export const createOrder = (data, images) => async (dispatch) => {
   await dispatch(setOrderLoading());

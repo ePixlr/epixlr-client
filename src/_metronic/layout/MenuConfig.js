@@ -510,26 +510,6 @@ export default {
         translate: "MENU.DASHBOARD",
         bullet: "dot"
       },
-      // {
-      //   title: "Submit Order",
-      //   root: false,
-      //   bullet: "dot",
-      //   icon: "flaticon2-image-file",
-      //   submenu: [
-      //     {
-      //       title: "Any",
-      //       bullet: "dot",
-      //     },
-      //     {
-      //       title: "Any",
-      //       bullet: "dot",
-      //     },
-      //     {
-      //       title: "Any",
-      //       bullet: "dot",
-      //     }
-      //   ]
-      // },
       {
         title: "Order Status",
         root: true,
@@ -550,9 +530,21 @@ export default {
       },
       {
         title: "Account Setting",
-        root: true,
         icon: "flaticon2-expand",
-        page: "builder"
+        root: false,
+        bullet: "dot",
+        submenu: [
+          {
+            title: "My Profile",
+            bullet: "dot",
+            page: "profile/me"
+          },
+          {
+            title: "My Users",
+            bullet: "dot",
+            page: "admin/users"
+          },
+        ]
       },
       {
         title: "API",

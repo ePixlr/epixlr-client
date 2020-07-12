@@ -44,7 +44,7 @@ class Header extends React.Component {
         {/* <!-- begin:: Header Topbar --> */}
         {/* <!-- empty div to fix topbar to stay on the right when menu-horizontal is hidden --> */}
         <div className="d-flex align-items-center pl-4">
-          <input type="text" class="form-control kt-search-input" placeholder="Search Projects..." />
+          
         </div>
         <Topbar />
         {/* <!-- end:: Header Topbar --> */}

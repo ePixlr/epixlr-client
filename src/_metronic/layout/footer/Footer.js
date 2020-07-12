@@ -16,7 +16,7 @@ class Footer extends React.Component {
           <div className="kt-footer__copyright">
             {today.toString()}&nbsp;&copy;&nbsp;
             <Link
-              href="/dashboard"
+              to="/dashboard"
               rel=""
               className="kt-link"
             >
@@ -26,21 +26,21 @@ class Footer extends React.Component {
           </div>
           <div className="kt-footer__menu">
             <Link
-              href="/dashboard"
+              to="/dashboard"
               rel=""
               className="kt-footer__menu-link kt-link"
             >
               FAQs
             </Link>
             <Link
-              href="/dashboard"
+              to="/dashboard"
               rel=""
               className="kt-footer__menu-link kt-link"
             >
               Support
             </Link>
             <Link
-              href="/dashboard"
+              to="/dashboard"
               rel=""
               className="kt-footer__menu-link kt-link"
             >
