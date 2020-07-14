@@ -25,7 +25,7 @@ export default function AuthPage() {
                 </Link>
               </div>
               <Switch>
-                <Route path="/auth/login" component={Login} />
+                <Route path="/auth/login/:token?" component={Login} />
                 <Route path="/auth/registration" component={Registration} />
                 <Route
                   path="/auth/forgot-password"

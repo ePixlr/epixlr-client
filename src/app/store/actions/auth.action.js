@@ -4,9 +4,14 @@ import {
   AUTH_START,
   AUTH_SUCCESS,
   CLEAR_ORDER_BUFFER,
+  SEND_EMAIL,
+  MAIL_LOADING,
+  ACCOUNT_VERIFICATION,
+  ACCOUNT_VERIFICATION_LOADING,
+  SIGNUP_SUCCESS
 } from "./types";
 import axios from "axios";
-let endPoint = process.env.REACT_APP_SERVER_URL + "auth";;
+let endPoint = process.env.REACT_APP_AUTH_API_URL;
 
 export const authStart = () => {
   return {
@@ -14,26 +19,85 @@ export const authStart = () => {
   };
 };
 
-export const authSuccess = (token, user) => {
+export const authSuccess = (token, user, verified) => {
   return {
     type: AUTH_SUCCESS,
     token,
     user,
+    verified,
   };
 };
 
-export const authFail = (error) => {
-  console.log("Auth Fail");
+export const authFail = (error, verified, user) => {
   return {
     type: AUTH_FAIL,
     error: error,
+    verified,
+    user,
   };
 };
 
 export const authLogout = () => {
-  console.log("LOGOUT");
   return {
     type: AUTH_LOGOUT,
+  };
+};
+
+export const accountVerified = (verified) => {
+  return {
+    type: ACCOUNT_VERIFICATION,
+    verified,
+  };
+};
+
+export const verificationLoading = () => {
+  return {
+    type: ACCOUNT_VERIFICATION_LOADING,
+  };
+};
+
+export const accountVerification = (token) => {
+  return (dispatch) => {
+    dispatch(verificationLoading());
+    axios
+      .get(`${endPoint}/verify/${token}`)
+      .then(({ data: { error } }) => {
+        if (!error) dispatch(accountVerified(true));
+        else dispatch(accountVerified(false));
+      })
+      .catch((error) => {
+        dispatch(accountVerified(false));
+      });
+  };
+};
+
+export const sendEmail = (status) => {
+  return {
+    type: SEND_EMAIL,
+    status,
+  };
+};
+
+export const mailLoading = () => {
+  return {
+    type: MAIL_LOADING,
+  };
+};
+
+export const sendverificationEmail = (userId) => {
+  return (dispatch) => {
+    dispatch(mailLoading());
+    axios
+      .post(`${endPoint}/verification/resend`, {
+        user: { _id: userId },
+      })
+      .then(({ data: { error } }) => {
+        if (!error) dispatch(sendEmail(true));
+        else dispatch(sendEmail(false));
+      })
+      .catch((error) => {
+        dispatch(sendEmail(false));
+      });
   };
 };
 
@@ -44,6 +108,13 @@ export const checkAuthTimeout = (expireTime) => {
     }, expireTime * 1000);
   };
 };
+
+export const signupSuccess = () => {
+  return {
+    type: SIGNUP_SUCCESS,
+  };
+};
+
 
 export const checkAuthState = () => {
   return (dispatch) => {
@@ -80,21 +151,22 @@ export const auth = (data, action) => {
     dispatch(authStart());
     axios
       .post(url, data)
-      .then(({ data: { error, token, user, expireIn } }) => {
-        if (error) dispatch(authFail(error));
+      .then(({ data: { error, token, user, expireIn, verified } }) => {
+        if (error) dispatch(authFail(error, verified, user));
+        else if (!error && action === 'SIGNUp') dispatch(signupSuccess());
         else {
           const expirationDate = new Date(
             new Date().getTime() + expireIn * 1000
           );
           localStorage.setItem("epxlr-auth", token);
           localStorage.setItem("expirationDate", expirationDate);
-          localStorage.setItem("user", user);
-          dispatch(authSuccess(token, user));
+          localStorage.setItem("user", JSON.stringify(user));
+          dispatch(authSuccess(token, user, verified));
           dispatch(checkAuthTimeout(expireIn));
         }
       })
       .catch((error) => {
-        dispatch(authFail(error.message));
+        dispatch(authFail(error.message, false));
       });
   };
 };

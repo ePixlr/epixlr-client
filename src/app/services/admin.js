@@ -18,3 +18,13 @@ export const getMyUsers = () => {
         },
     });
 }
+
+export const updateUserRole = (role, id) => {
+    return axios.put(`${endPoint}/users/role`, { "role": role, "userId": id }, {
+      headers: {
+        Authorization: localStorage.getItem("epxlr-auth"),
+        "Content-Type": "application/json",
+      },
+    });
+  };
+  

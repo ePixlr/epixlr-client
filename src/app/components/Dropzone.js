@@ -41,8 +41,8 @@ function Dropzone({ handleImgBuffer, loading }) {
         </h5>
         <div className="kt-dropzone__assets mt-5 mb-3">
           <div className="d-flex flex-column align-items-center p-4 btn">
-            <div class="image-upload">
-              <label for="file-input">
+            <div className="image-upload">
+              <label htmlFor="file-input">
                 <img
                   alt="google-drive"
                   src={toAbsoluteUrl("/media/icons/device-upload.svg")}

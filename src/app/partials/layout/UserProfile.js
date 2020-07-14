@@ -1,5 +1,6 @@
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid */
 import React from "react";
+import { Link } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import { connect } from "react-redux";
 import { toAbsoluteUrl } from "../../../_metronic";
@@ -36,14 +37,14 @@ class UserProfile extends React.Component {
               <div className="kt-notification__item-icon">
                 <i className="flaticon2-calendar-3 kt-font-success" />
               </div>
-              <div className="kt-notification__item-details">
+              <Link to="/profile/me" className="kt-notification__item-details">
                 <div className="kt-notification__item-title kt-font-bold">
                   My Profile
                 </div>
                 <div className="kt-notification__item-time">
                   Account settings and more
                 </div>
-              </div>
+              </Link>
             </a>
             <div className="kt-notification__custom">
               <button
@@ -68,7 +69,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.auth.user,
+    user: state.auth.user.userName,
   };
 };
 

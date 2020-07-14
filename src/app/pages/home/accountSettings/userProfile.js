@@ -4,6 +4,7 @@ import {
   } from '@material-ui/core';
 import swal from 'sweetalert';
 import { getUserProfile, updateUserProfile, updateUserProfileAvatar } from '../../../services/userProfile'
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
     '@global': {
@@ -118,7 +119,17 @@ function UserProfile(props) {
                                         <div className={classes.avatarDescription}>
                                             User Photo <br/>
                                             The image should be atleast 300 x 300 pixels <br/>
-                                            <button disabled={submitting} className="btn btn-sm btn-primary" onClick={handleUploadImageClick}>
+                                            <button disabled={submitting} onClick={handleUploadImageClick} className={`btn btn-sm btn-primary ${clsx(
+                                                {
+                                                "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light":
+                                                    props.loading,
+                                                }
+                                            )}`}
+                                            style={
+                                                props.loading
+                                                ? { paddingRight: "3.5rem" }
+                                                : { paddingRight: "2.5rem" }
+                                            }>
                                                 Upload Image
                                             </button>
                                             <input ref={uploadImageBtn} onChange={handleFileSelect} type="file" className="d-none" />
@@ -252,8 +263,18 @@ function UserProfile(props) {
             <div className="row px-5">
                 <div className="col d-flex justify-content-end">
                     <span className="spacer p-2" />
-                    <button disabled={submitting} className="btn btn-primary" onClick={handleSubmit}>
-                        Update Profile
+                    <button disabled={submitting} onClick={handleSubmit} className={`btn btn-primary ${clsx(
+                            {
+                                "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light":
+                                submitting,
+                            }
+                        )}`}
+                        style={
+                            submitting
+                            ? { paddingRight: "3.5rem" }
+                            : { paddingRight: "2.5rem" }
+                        }>
+                        {!submitting ? 'Update Profile' : 'Updating ...'}
                     </button>
                 </div>
             </div>

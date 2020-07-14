@@ -47,7 +47,7 @@ function getStepContent(step, handleBack, handleNext) {
 }
 
 function Index(props) {
-  const [activeStep, setActiveStep] = React.useState(2);
+  const [activeStep, setActiveStep] = React.useState(0);
   const [stepNext, setStepNext] = React.useState(false);
 
   const handleNext = () => {

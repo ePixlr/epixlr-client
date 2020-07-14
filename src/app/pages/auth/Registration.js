@@ -29,6 +29,25 @@ function Registration(props) {
     await props.auth(values, "SIGNUP");
   };
 
+if(!props.error && props.message){
+  return (
+    <React.Fragment>
+      <div className="kt-portlet mt-5" style={{backgroundColor: '#c0c0c02e'}}>
+            <div className="kt-portlet__head">
+              <div className="kt-portlet__head-label">
+                <h5 className="kt-portlet__head-title bg-">
+                A Verification link has been send to your email account
+                </h5>
+              </div>
+            </div>
+            <div className="kt-portlet__body">
+              <p>Please click on the link that has been send to your email account to verify your email and continue the registration process.</p>
+          <Link to="/auth/login" className='text-info text-center'>Go to signin page</Link>
+            </div>
+          </div>
+    </React.Fragment>
+  )
+}
   return (
     <div className="kt-login__body">
       <div className="kt-login__form">
@@ -120,6 +139,7 @@ const mapStateToProps = (state) => {
   return {
     loading: state.auth.loading,
     error: state.auth.error,
+    message: state.auth.message,
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Registration);
