@@ -4,6 +4,7 @@ import {
   } from '@material-ui/core';
 import swal from 'sweetalert';
 import { getUserProfile, updateUserProfile, updateUserProfileAvatar } from '../../../services/userProfile'
+import { changePassword } from '../../../services/auth'
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
@@ -55,7 +56,10 @@ function UserProfile(props) {
     const classes = useStyles();
     const [userProfile, setUserProfile] = useState({});
     const [submitting ,setSubmitting] = useState(false)
+    const [allowChangePassword, setAllowChangePassword] = useState(false)
     const [userId, setUserId] = useState('')
+    const [password, setPassword] = useState('**********')
+    const [updatingPassword, setUpdatingPassword] = useState(false)
     const uploadImageBtn = useRef(null)
     const avatarImg = useRef(null)
     useEffect(() => {
@@ -75,6 +79,16 @@ function UserProfile(props) {
           [name]: value,
         });
     };
+
+    const handlePasswordChange = () => {
+        setUpdatingPassword(true)
+        changePassword(password).then(() => {
+            setAllowChangePassword(false)
+            setUpdatingPassword(false)
+            setPassword('**********')
+            swal('Password updated','Your password has been updated successfully',"success")
+        })
+    }
 
     const handleUploadImageClick = () => {
         uploadImageBtn.current.click()
@@ -102,6 +116,9 @@ function UserProfile(props) {
             else{
                 swal('Profile not saved','There was an error saving the user profile. Please try again',"error")
             }
+        }).catch(err => {
+            setSubmitting(false)
+            swal('Error','There was an error saving the user profile. Please try again',"error")
         })
     }
 
@@ -150,8 +167,8 @@ function UserProfile(props) {
                                             <input
                                                 type="text"
                                                 className="form-control"
-                                                name="name"
-                                                value={userProfile.name || ''}
+                                                name="userName"
+                                                value={userProfile.userName || ''}
                                                 onChange={handleChange}
                                             />
                                         </div>
@@ -161,20 +178,30 @@ function UserProfile(props) {
                                                 type="email"
                                                 className="form-control"
                                                 name="email"
+                                                disabled
                                                 value={userProfile.email || ''}
-                                                onChange={handleChange}
                                             />
                                         </div>
                                         <div className={"col-md-12 d-flex align-items-center " + classes.mb20 }>
                                             <label>Password</label>
                                             <input
-                                                type="text"
+                                                type="password"
                                                 className={"form-control " + classes.w85}
                                                 name="password"
-                                                disabled
-                                                value="************"
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                disabled = {!allowChangePassword}
+                                                value={password}
                                             />
-                                            <span className={classes.changePasswordSpan}>Change</span>
+                                            {
+                                                updatingPassword && <div class="spinner-border" role="status" />
+                                            }
+                                            {
+                                                !updatingPassword && allowChangePassword && <span onClick={handlePasswordChange} className={classes.changePasswordSpan}>Save</span>
+                                            }
+                                            {
+                                                !allowChangePassword && <span onClick={()=>setAllowChangePassword(true)} className={classes.changePasswordSpan}>Change</span>
+                                            }
+                                            
                                         </div>
                                         <div className={"col-md-12 d-flex align-items-center " + classes.mb20 }>
                                             <label>Company</label>

@@ -5,6 +5,7 @@ import "../../../_metronic/_assets/sass/pages/login/login-1.scss";
 import Login from "./Login";
 import Registration from "./Registration";
 import ForgotPassword from "./ForgotPassword";
+import CreateAccount from "./CreateAccount";
 
 export default function AuthPage() {
   return (
@@ -27,6 +28,7 @@ export default function AuthPage() {
               <Switch>
                 <Route path="/auth/login/:token?" component={Login} />
                 <Route path="/auth/registration" component={Registration} />
+                <Route path="/account/create/:token?" component={CreateAccount} />
                 <Route
                   path="/auth/forgot-password"
                   component={ForgotPassword}

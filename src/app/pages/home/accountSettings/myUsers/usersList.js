@@ -1,11 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
-
 import {
     makeStyles
   } from '@material-ui/core';
-import swal from 'sweetalert';
 import { getMyUsers } from '../../../../services/admin'
+import { getUserSubscription } from '../../../../services/subscription'
 
 const useStyles = makeStyles((theme) => ({
     '@global': {
@@ -30,6 +29,16 @@ const useStyles = makeStyles((theme) => ({
     },
     shadow: {
         boxShadow: "2px 3px 22px #88888824"
+    },
+    subscriptionError: {
+        color: "red",
+        padding: "10px"
+    },
+    disabled: {
+        cursor: "default",
+        pointerEvents: "none",
+        textDecoration: "none",
+        backgroundColor: "#00bcd5b0"
     }
 }));
 
@@ -37,13 +46,26 @@ function UsersList(props) {
     const classes = useStyles();
     const [users, setUsers] = useState([]);
     const [usersLoaded, setUsersLoaded] = useState(false);
+    const [userHasSubscription, setUserHasSubscription] = useState(false)
+    const [canInviteUsers, setCanInviteUsers] = useState(false)
 
     useEffect(() => {
-        getMyUsers().then(({data, status}) => {
+        getUserSubscription().then(({data, status}) => {
+            setUserHasSubscription(true)
+            const subscription = data
+            getMyUsers().then(({data, status}) => {
+                setUsersLoaded(true)
+                if(status === 200){
+                    setUsers(data)
+                    if(subscription && subscription.plan.noOfUsers > data.length){
+                        setCanInviteUsers(true)
+                    }
+                }    
+            })
+        }).catch(err => {
             setUsersLoaded(true)
-            if(status === 200)
-                setUsers(data)
         })
+        
     },[]);
 
     return (
@@ -51,9 +73,15 @@ function UsersList(props) {
             <div className={"row " + classes.mb20}>
                 <div className="col d-flex justify-content-start">
                     <span className="spacer p-2" />
-                    <Link to="/admin/invite-user" className="btn btn-primary">
+                    <Link to="/admin/invite-user" className={ (userHasSubscription && canInviteUsers) ? "btn btn-primary" :  "btn btn-primary disabled"}>
                         Invite User
                     </Link>
+                    {
+                        !userHasSubscription && <div className={classes.subscriptionError}>You need to subscribe to a plan to be able to invite users</div>
+                    }
+                    {
+                        userHasSubscription && !canInviteUsers && <div className={classes.subscriptionError}>Please upgrade your subscription to be able to invite more users</div>
+                    }
                 </div>
             </div>
             <div className="row">
