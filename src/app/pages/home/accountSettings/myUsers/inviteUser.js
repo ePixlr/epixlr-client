@@ -38,6 +38,7 @@ function InviteUser(props) {
         setSubmitting(true)
         inviteUser(newUser).then(({data, status}) => {
             setSubmitting(false)
+            setNewUser({})
             swal('User Invited','An invitation email has been sent to the user to join ePixilier',"success")
         }).catch((error) => {
             setSubmitting(false)

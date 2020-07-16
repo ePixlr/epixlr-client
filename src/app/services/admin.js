@@ -26,5 +26,14 @@ export const updateUserRole = (role, id) => {
         "Content-Type": "application/json",
       },
     });
-  };
+};
+
+export const deleteUser = (id) => {
+    return axios.delete(`${endPoint}/users/${id}`, {
+        headers: {
+          Authorization: localStorage.getItem("epxlr-auth"),
+          "Content-Type": "application/json",
+        },
+    });
+}
   

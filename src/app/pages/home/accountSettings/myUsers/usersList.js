@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import { Link } from 'react-router-dom'
 import {
     makeStyles
   } from '@material-ui/core';
-import { getMyUsers } from '../../../../services/admin'
+import { getMyUsers, deleteUser } from '../../../../services/admin'
 import { getUserSubscription } from '../../../../services/subscription'
+import swal from 'sweetalert';
 
 const useStyles = makeStyles((theme) => ({
     '@global': {
@@ -45,8 +46,19 @@ const useStyles = makeStyles((theme) => ({
         right: "5%",
         textDecoration: "underline"
     },
+    deleteProfileLink: {
+        position: "absolute",
+        top: "16%",
+        right: "5%",
+        textDecoration: "underline",
+        cursor: "pointer",
+        color: "#ed1d25"
+    },
     w100:{
         width: "100%"
+    },
+    planSup:{
+        color: "#00bbd4"
     }
 }));
 
@@ -76,6 +88,26 @@ function UsersList(props) {
         
     },[]);
 
+    const handleDeleteUser = useCallback((id) => {
+        swal({
+            title: 'Delete User',
+            text:'Are you sure you want to delete this user? This operation cannot be undone.',
+            icon:"warning",
+            buttons: {
+                cancel: "No, Cancel it!",
+                proceed: {text: "Yes, I'm sure", closeModal: false}
+            }
+        }).then(value => {
+
+            if (value === "cancel") swal.close()
+            return deleteUser(id) 
+            //return new Promise((resolve, reject) => {resolve()})
+        }).then(({data,status}) => {
+            setUsers(data)
+            swal("User Deleted","User has been deleted successfully.","success")
+        })
+    },[])
+
     return (
         <React.Fragment>
             <div className={"row " + classes.mb20}>
@@ -85,10 +117,10 @@ function UsersList(props) {
                         Invite User
                     </Link>
                     {
-                        !userHasSubscription && <div className={classes.subscriptionError}>You need to subscribe to a plan to be able to invite users</div>
+                        usersLoaded && !userHasSubscription && <div className={classes.subscriptionError}>You need to subscribe to a plan to be able to invite users</div>
                     }
                     {
-                        userHasSubscription && !canInviteUsers && <div className={classes.subscriptionError}>Please upgrade your subscription to be able to invite more users</div>
+                        usersLoaded && userHasSubscription && !canInviteUsers && <div className={classes.subscriptionError}>Please upgrade your subscription to be able to invite more users</div>
                     }
                 </div>
             </div>
@@ -104,9 +136,10 @@ function UsersList(props) {
                                                 <div className="card-body">
                                                     <div>
                                                         <img className={"" + classes.avatar} src={user.profile.avatar ? user.profile.avatar : process.env.PUBLIC_URL + "/media/avatar.png"} alt="User Profile img" />
-                                                        <Link className={classes.editProfileLink} to={"/profile/" + user._id} >Edit User Profile</Link>
+                                                        <Link className={classes.editProfileLink} to={ key === 0 ? "profile/me" :"/profile/" + user._id} >Edit User Profile</Link>
+                                                        {key !== 0 ? <span onClick={() => handleDeleteUser(user._id)} className={classes.deleteProfileLink} >Delete User</span> : ''}
                                                     </div>
-                                                    <h5 className="card-title">{user.userName}</h5>
+                                                    <h5 className="card-title">{user.userName} {key ===0 ? <sup className={classes.planSup}>{user.subscription.plan.planName}</sup> : <sub className={classes.planSup}>{user.status}</sub>}</h5>
                                                     <p className="card-text">{user.role}</p>
                                                 </div>
                                             </div>
