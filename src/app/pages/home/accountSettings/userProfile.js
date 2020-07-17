@@ -5,7 +5,9 @@ import {
 import swal from 'sweetalert';
 import { getUserProfile, updateUserProfile, updateUserProfileAvatar } from '../../../services/userProfile'
 import { changePassword } from '../../../services/auth'
+import { deleteUser } from '../../../services/admin'
 import clsx from "clsx";
+import {navigate} from 'hookrouter';
 
 const useStyles = makeStyles((theme) => ({
     '@global': {
@@ -25,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     },
     mb20:{
         marginBottom: "20px"
+    },
+    ml10:{
+        marginLeft: "10px"
     },
     changePasswordSpan: {
         marginLeft: "20px",
@@ -71,6 +76,26 @@ function UserProfile(props) {
             }
         })
     },[]);
+
+    const handleDeleteUser = () => {
+        swal({
+            title: 'Delete User',
+            text:'Are you sure you want to delete this user? This operation cannot be undone.',
+            icon:"warning",
+            buttons: {
+                cancel: "No, Cancel it!",
+                proceed: {text: "Yes, I'm sure", closeModal: false, value:"proceed"}
+            }
+        }).then(value => {
+            if (value === null){
+                return new Promise((resolve, reject) => reject())
+            }
+            return deleteUser(userId) 
+        }).then(({data,status}) => {
+            swal("User Deleted","User has been deleted successfully.","success")
+            navigate('/admin/users', true);
+        }).catch(err => swal.close())
+    }
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -303,6 +328,10 @@ function UserProfile(props) {
                         }>
                         {!submitting ? 'Update Profile' : 'Updating ...'}
                     </button>
+                    {
+                        userId !== "me" &&
+                        <button className={"btn btn-danger " + classes.ml10 }onClick={handleDeleteUser}>Delete User</button>
+                    }
                 </div>
             </div>
         </React.Fragment>

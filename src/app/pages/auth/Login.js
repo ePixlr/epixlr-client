@@ -15,7 +15,6 @@ function Login(props) {
   const [values, setValues] = React.useState({ email: "", password: "" });
 
   React.useEffect(() => {
-    console.log(props.match, "propsps");
     props.removeError(null);
   }, []);
 

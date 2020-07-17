@@ -44,5 +44,7 @@ export function getLastLocation() {
 
   const _userLocations = JSON.parse(localStorateLocations);
   const result = _userLocations.length > 0 ? _userLocations.pop() : "/";
+  if(result.includes("account") || result.includes("auth"))
+    result = "/"
   return result;
 }

@@ -3,7 +3,6 @@ import {
   AUTH_LOGOUT,
   AUTH_START,
   AUTH_SUCCESS,
-  CLEAR_ORDER_BUFFER,
   SEND_EMAIL,
   MAIL_LOADING,
   ACCOUNT_VERIFICATION,
@@ -20,6 +19,7 @@ export const authStart = () => {
 };
 
 export const authSuccess = (token, user, verified) => {
+  console.log(token,user,verified);
   return {
     type: AUTH_SUCCESS,
     token,
@@ -29,6 +29,7 @@ export const authSuccess = (token, user, verified) => {
 };
 
 export const authFail = (error, verified, user) => {
+  console.log("AUTH FAIL",error)
   return {
     type: AUTH_FAIL,
     error: error,
@@ -66,6 +67,7 @@ export const accountVerification = (token) => {
         else dispatch(accountVerified(false));
       })
       .catch((error) => {
+        console.log(error)
         dispatch(accountVerified(false));
       });
   };
@@ -96,6 +98,7 @@ export const sendverificationEmail = (userId) => {
         else dispatch(sendEmail(false));
       })
       .catch((error) => {
+        console.log(error)
         dispatch(sendEmail(false));
       });
   };
@@ -153,7 +156,7 @@ export const auth = (data, action) => {
       .post(url, data)
       .then(({ data: { error, token, user, expireIn, verified } }) => {
         if (error) dispatch(authFail(error, verified, user));
-        else if (!error && action === 'SIGNUp') dispatch(signupSuccess());
+        else if (!error && action === 'SIGNUP') dispatch(signupSuccess());
         else {
           const expirationDate = new Date(
             new Date().getTime() + expireIn * 1000
@@ -166,6 +169,7 @@ export const auth = (data, action) => {
         }
       })
       .catch((error) => {
+        console.log(error)
         dispatch(authFail(error.message, false));
       });
   };

@@ -12,7 +12,7 @@ function OrderStatus(props) {
                         </div>
                     </div>
                     <div className="kt-portlet__body">
-                        <table className="table">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th scope="col">Order No#</th>
@@ -35,7 +35,7 @@ function OrderStatus(props) {
                                         </div>
                                     </td>
                                     <td className="d-flex justify-content-center align-items-center">
-                                        <button type="button" className="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
+                                        <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
                                             <i className="flaticon-eye" />
                                         </button>
                                     </td>
@@ -52,7 +52,7 @@ function OrderStatus(props) {
                                         </div>
                                     </td>
                                     <td className="d-flex justify-content-center align-items-center">
-                                        <button type="button" className="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
+                                        <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
                                             <i className="flaticon-eye" />
                                         </button>
                                     </td>
@@ -69,7 +69,7 @@ function OrderStatus(props) {
                                         </div>
                                     </td>
                                     <td className="d-flex justify-content-center align-items-center">
-                                        <button type="button" className="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
+                                        <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
                                             <i className="flaticon-eye" />
                                         </button>
                                     </td>
@@ -86,7 +86,7 @@ function OrderStatus(props) {
                                         </div>
                                     </td>
                                     <td className="d-flex justify-content-center align-items-center">
-                                        <button type="button" className="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
+                                        <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-sm p-1" onClick={props.handleNext}>
                                             <i className="flaticon-eye" />
                                         </button>
                                     </td>

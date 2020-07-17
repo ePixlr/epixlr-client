@@ -45,6 +45,9 @@ const authSuccess = (state, action) => {
 };
 
 const authFail = (state, action) => {
+  localStorage.removeItem("epxlr-auth");
+  localStorage.removeItem("expirationDate");
+  localStorage.removeItem("user");
   return {
     ...state,
     error: action.error,

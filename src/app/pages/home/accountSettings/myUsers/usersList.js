@@ -95,17 +95,17 @@ function UsersList(props) {
             icon:"warning",
             buttons: {
                 cancel: "No, Cancel it!",
-                proceed: {text: "Yes, I'm sure", closeModal: false}
+                proceed: {text: "Yes, I'm sure", closeModal: false, value:"proceed"}
             }
         }).then(value => {
 
-            if (value === "cancel") swal.close()
+            if (value === null) return new Promise((resolve, reject) => reject())
             return deleteUser(id) 
-            //return new Promise((resolve, reject) => {resolve()})
         }).then(({data,status}) => {
             setUsers(data)
             swal("User Deleted","User has been deleted successfully.","success")
-        })
+            
+        }).catch(err => swal.close())
     },[])
 
     return (
@@ -136,7 +136,7 @@ function UsersList(props) {
                                                 <div className="card-body">
                                                     <div>
                                                         <img className={"" + classes.avatar} src={user.profile.avatar ? user.profile.avatar : process.env.PUBLIC_URL + "/media/avatar.png"} alt="User Profile img" />
-                                                        <Link className={classes.editProfileLink} to={ key === 0 ? "profile/me" :"/profile/" + user._id} >Edit User Profile</Link>
+                                                        <Link className={classes.editProfileLink} to={ key === 0 ? "/profile/me" :"/profile/" + user._id} >Edit User Profile</Link>
                                                         {key !== 0 ? <span onClick={() => handleDeleteUser(user._id)} className={classes.deleteProfileLink} >Delete User</span> : ''}
                                                     </div>
                                                     <h5 className="card-title">{user.userName} {key ===0 ? <sup className={classes.planSup}>{user.subscription.plan.planName}</sup> : <sub className={classes.planSup}>{user.status}</sub>}</h5>
