@@ -81,7 +81,7 @@ function StickyToolbar(props) {
 const mapStateToProps = (state) => {
   return {
     imagesCount: state.orders.noOfImages,
-    advancedTemplateCharges: state.orders.advancedTemplateCharges,
+    advancedTemplateCharges: state.orders.advancedTemplateCharges.noOfImages,
     orderFormStep: state.orders.orderFormStep,
     currentBackground: state.templates.currentBackground,
   };
