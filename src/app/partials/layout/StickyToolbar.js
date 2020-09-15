@@ -49,7 +49,11 @@ function StickyToolbar(props) {
                 <div className="d-flex justify-content-between">
                   <span className="mt-3">Basic ${props.imagesCount * 2}</span>
                   <span className="mt-3">
-                    Advanced ${props.advancedTemplateCharges}
+                    Advanced $
+                    {props.advancedTemplateCharges === 1 && props.advancedTemplateCharges + " " + "Image"}
+                  {(props.advancedTemplateCharges > 1 || props.advancedTemplateCharges === 0) &&
+                    props.advancedTemplateCharges + " " + "Images"}
+
                   </span>
                 </div>
                 <div className="text-right mt-2">
