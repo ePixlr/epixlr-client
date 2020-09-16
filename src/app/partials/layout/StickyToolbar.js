@@ -50,15 +50,16 @@ function StickyToolbar(props) {
                   <span className="mt-3">Basic ${props.imagesCount * 2}</span>
                   <span className="mt-3">
                     Advanced $
-                    {props.advancedTemplateCharges === 1 && props.advancedTemplateCharges + " " + "Image"}
-                  {(props.advancedTemplateCharges > 1 || props.advancedTemplateCharges === 0) &&
-                    props.advancedTemplateCharges + " " + "Images"}
+                    {props.advancedTemplateCharges}
 
                   </span>
                 </div>
                 <div className="text-right mt-2">
                   <span className="mt-3">
-                    Total $
+                  
+          
+                    Total $ {props.imagesCount}
+                  
                     {props.imagesCount * 2 + props.advancedTemplateCharges}
                   </span>
                 </div>
