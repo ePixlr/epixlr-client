@@ -58,9 +58,9 @@ function StickyToolbar(props) {
                   <span className="mt-3">
                   
           
-                    Total $ {props.imagesCount}
+                    Total $ 
                   
-                    {props.imagesCount * 2 + props.advancedTemplateCharges}
+                    {props.imagesCount * 2 + (props.advancedTemplateCharges * props.imagesCount)}
                   </span>
                 </div>
                 <hr />
